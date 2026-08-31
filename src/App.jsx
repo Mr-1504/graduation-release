@@ -208,7 +208,7 @@ export default function App() {
               className="btn-secondary"
               style={{ cursor: "pointer" }}
             >
-              XEM HÀNH TRÌNH 4 NĂM ↓
+              CHANGELOG ↓
               <ArrowDown size={16} />
             </button>
           </div>

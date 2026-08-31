@@ -52,7 +52,7 @@ export const changelog = [
     tag: "STABLE",
     items: {
       vi: [
-        "Nhập học trường Đại học Giao thông Vận tải (UTC)",
+        "Nhập học Trường Đại học Giao thông Vận tải (UTC)",
         "Gặp gỡ những người bạn & người thầy tuyệt vời",
         "Tham gia CLB và có được những mối quan hệ mới",
         "Học cách hệ thống máy tính & khoa học máy tính hoạt động",
@@ -163,69 +163,6 @@ export const changelog = [
   },
 ];
 
-export const knownIssues = [
-  {
-    id: "#001",
-    title: {
-      vi: "Định hướng tương lai",
-      en: "Life Direction Uncertainty",
-    },
-    description: {
-      vi: "Vẫn chưa biết 100% mình sẽ làm gì với cuộc đời, nhưng luôn tự tin tiến về phía trước.",
-      en: "Still doesn't know 100% what he's doing with his life, but navigating with confidence.",
-    },
-    severity: "IN PROGRESS",
-  },
-  {
-    id: "#002",
-    title: {
-      vi: "Phụ thuộc Cà phê",
-      en: "Caffeine Dependency",
-    },
-    description: {
-      vi: "Lỗi phụ thuộc Cà phê vẫn chưa thể sửa. Thử nghiệm giảm liều lượng thất bại tại các vòng test.",
-      en: "Coffee dependency remains unresolved. Attempts to reduce intake failed build tests.",
-    },
-    severity: "CRITICAL",
-  },
-  {
-    id: "#003",
-    title: {
-      vi: "Bồi hồi nhớ thời sinh viên",
-      en: "Nostalgia Spikes",
-    },
-    description: {
-      vi: "Thi thoảng có thể xuất hiện triệu chứng bồi hồi nhớ thời sinh viên khi thức đêm làm code.",
-      en: "Occasional nostalgia for 4 student years may occur during late-night code sessions.",
-    },
-    severity: "EXPECTED",
-  },
-  {
-    id: "#004",
-    title: {
-      vi: "Thói quen thức đêm refactor",
-      en: "Unnecessary Coding",
-    },
-    description: {
-      vi: "Có thể tiếp tục refactor code và gõ phím quá 2 giờ sáng một cách không thực sự cần thiết.",
-      en: "May continue refactoring and writing code past 2:00 AM unnecessarily.",
-    },
-    severity: "WARNING",
-  },
-  {
-    id: "#005",
-    title: {
-      vi: "Yêu cầu có mặt trực tiếp",
-      en: "Physical Presence Required",
-    },
-    description: {
-      vi: "Lễ tốt nghiệp yêu cầu sự có mặt bằng xương bằng thịt của bạn tại hội trường.",
-      en: "Graduation ceremony requires actual human presence in physical space.",
-    },
-    severity: "ACTION REQUIRED",
-  },
-];
-
 export const contributors = [
   {
     role: "CORE MAINTAINERS",
@@ -260,8 +197,8 @@ export const contributors = [
   {
     role: "DEVELOPMENT PARTNERS",
     group: {
-      vi: "Bạn Bè & Đồng Đội",
-      en: "Friends & Teammates",
+      vi: "Bạn Bè",
+      en: "Friends",
     },
     summary: {
       vi: "Đồng hành qua những khó khăn, thử thách và những kỷ niệm đáng nhớ.",
