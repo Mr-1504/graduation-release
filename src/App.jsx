@@ -141,6 +141,7 @@ export default function App() {
           <div className="hero-meta-top">
             <span className="tag">RELEASE / {releaseInfo.release}</span>
             <span>BUILD {releaseInfo.build}</span>
+            <span className="hero-ai-badge">Xin xác nhận sản phẩm được tạo bởi AI:))</span>
           </div>
 
           {/* Featured Top Slogan */}
