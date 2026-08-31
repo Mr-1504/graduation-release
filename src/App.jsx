@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   releaseInfo,
+  bootLogs,
   changelog,
   contributors,
 } from "./data";
@@ -13,15 +14,30 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  Terminal,
+  SkipForward,
 } from "lucide-react";
 
 export default function App() {
   const lang = "vi";
+  const [isBooted, setIsBooted] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeContributor, setActiveContributor] = useState(null);
   const [rsvpStatus, setRsvpStatus] = useState(() => {
     return localStorage.getItem("graduation_rsvp") || null;
   });
+
+  // Enable body overflow once booted
+  useEffect(() => {
+    if (!isBooted) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isBooted]);
 
   // Accordion state for Changelog (default latest version open)
   const [expandedVersions, setExpandedVersions] = useState({
@@ -59,6 +75,7 @@ export default function App() {
 
   // Track scroll progress
   useEffect(() => {
+    if (!isBooted) return;
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
       if (totalScroll > 0) {
@@ -67,12 +84,16 @@ export default function App() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isBooted]);
 
   const handleRsvp = (status) => {
     setRsvpStatus(status);
     localStorage.setItem("graduation_rsvp", status);
   };
+
+  if (!isBooted) {
+    return <BootScreen lang={lang} onLaunch={() => setIsBooted(true)} />;
+  }
 
   return (
     <div className="app-container">
@@ -98,7 +119,7 @@ export default function App() {
               handleScrollTo("ceremony");
             }}
           >
-            {lang === "vi" ? "THIỆP MỜI" : "CEREMONY"}
+            THIỆP MỜI
           </a>
 
           <a
@@ -109,7 +130,7 @@ export default function App() {
               handleScrollTo("changelog");
             }}
           >
-            {lang === "vi" ? "HÀNH TRÌNH" : "JOURNEY"}
+            HÀNH TRÌNH
           </a>
         </div>
       </header>
@@ -125,9 +146,7 @@ export default function App() {
           {/* Featured Top Slogan */}
           <div className="hero-slogan-top">
             <span>
-              {lang === "vi"
-                ? "Đây không phải là hồi kết. Đây là mở đầu cho phiên bản tiếp theo."
-                : "This is not the end. This is the beginning of the next version."}
+              Đây không phải là hồi kết. Đây là mở đầu cho phiên bản tiếp theo.
             </span>
           </div>
 
@@ -148,9 +167,7 @@ export default function App() {
               <div className="hero-life-note">
                 <span className="life-note-tag">[DEV NOTE / KNOWN ISSUE]</span>
                 <p>
-                  {lang === "vi"
-                    ? "Dù vẫn chưa biết 100% mình sẽ làm gì với cuộc đời, nhưng luôn tự tin tiến về phía trước."
-                    : "Still doesn't know 100% what I'll do with life, but always moving forward with confidence."}
+                  Dù vẫn chưa biết 100% mình sẽ làm gì với cuộc đời, nhưng luôn tự tin tiến về phía trước.
                 </p>
               </div>
             </div>
@@ -182,7 +199,7 @@ export default function App() {
               className="btn-primary"
               style={{ cursor: "pointer", border: "none" }}
             >
-              {lang === "vi" ? "XEM THIỆP MỜI →" : "VIEW INVITATION →"}
+              XEM THIỆP MỜI →
               <ArrowUpRight size={18} />
             </button>
 
@@ -191,13 +208,13 @@ export default function App() {
               className="btn-secondary"
               style={{ cursor: "pointer" }}
             >
-              {lang === "vi" ? "XEM HÀNH TRÌNH 4 NĂM ↓" : "VIEW 4-YEAR JOURNEY ↓"}
+              XEM HÀNH TRÌNH 4 NĂM ↓
               <ArrowDown size={16} />
             </button>
           </div>
         </section>
 
-        {/* 01 — DEPLOYMENT (Ceremony Invitation) - Moved up right after Hero */}
+        {/* 01 — DEPLOYMENT (Ceremony Invitation) */}
         <section id="ceremony" className="section">
           <div className="section-head">
             <span className="num">01</span>
@@ -207,13 +224,9 @@ export default function App() {
 
           <div className="ceremony-grid">
             <div className="ceremony-info">
-              <h3>
-                {lang === "vi" ? "THỜI GIAN & ĐỊA ĐIỂM LỄ TỐT NGHIỆP." : "THE FINAL BUILD IS DEPLOYING."}
-              </h3>
+              <h3>THỜI GIAN & ĐỊA ĐIỂM LỄ TỐT NGHIỆP.</h3>
               <p>
-                {lang === "vi"
-                  ? "Trân trọng kính mời bạn đến tham dự Lễ tốt nghiệp và chia vui trong ngày trọng đại này!"
-                  : "You are cordially invited to celebrate the graduation ceremony of mine."}
+                Trân trọng kính mời bạn đến tham dự Lễ tốt nghiệp và chia vui trong ngày trọng đại này!
               </p>
             </div>
 
@@ -250,22 +263,18 @@ export default function App() {
                 className="btn-location"
               >
                 <MapPin size={16} />
-                {lang === "vi" ? "MỞ VỊ TRÍ TRÊN GOOGLE MAPS" : "OPEN LOCATION IN GOOGLE MAPS"}
+                MỞ VỊ TRÍ TRÊN GOOGLE MAPS
                 <ExternalLink size={14} />
               </a>
             </div>
           </div>
         </section>
 
-        {/* 02 — RSVP (Deployment Confirmation) - Placed directly after Ceremony */}
+        {/* 02 — RSVP (Deployment Confirmation) */}
         <section id="rsvp" className="section" style={{ paddingTop: "1rem" }}>
           <div className="rsvp-card">
             <div className="rsvp-eyebrow">DEPLOYMENT CONFIRMATION</div>
-            <h2>
-              {lang === "vi"
-                ? "BẠN SẼ ĐẾN THAM DỰ CHỨ?"
-                : "WILL YOU BE THERE FOR THE FINAL DEPLOYMENT?"}
-            </h2>
+            <h2>BẠN SẼ ĐẾN THAM DỰ CHỨ?</h2>
 
             {!rsvpStatus ? (
               <div className="rsvp-buttons">
@@ -294,22 +303,20 @@ export default function App() {
                 </div>
                 <div className="rsvp-status-sub">
                   {rsvpStatus === "yes"
-                    ? (lang === "vi" ? "Rất mong được gặp bạn tại lễ tốt nghiệp!" : "See you at the ceremony!")
-                    : (lang === "vi" ? "Cảm ơn bạn đã đồng hành cùng mình trong suốt 4 năm qua." : "Thanks for being a part of the journey.")}
+                    ? "Rất mong được gặp bạn tại lễ tốt nghiệp!"
+                    : "Cảm ơn bạn đã đồng hành cùng mình trong suốt 4 năm qua."}
                 </div>
                 <button
                   className="btn-reset-rsvp"
                   onClick={() => handleRsvp(null)}
                 >
-                  {lang === "vi" ? "Thay đổi câu trả lời" : "Change Response"}
+                  Thay đổi câu trả lời
                 </button>
               </div>
             )}
 
             <div className="rsvp-device-note">
-              {lang === "vi"
-                ? "* Lưu ý: Lựa chọn của bạn được lưu trực tiếp trên thiết bị này."
-                : "* Note: Your response is saved locally on this device."}
+              * Lưu ý: Lựa chọn của bạn được lưu trực tiếp trên thiết bị này.
             </div>
           </div>
         </section>
@@ -319,7 +326,7 @@ export default function App() {
           <div className="section-head">
             <span className="num">03</span>
             <h2>CHANGELOG</h2>
-            <span className="sub">{lang === "vi" ? "HÀNH TRÌNH 4 NĂM" : "RELEASE HISTORY"}</span>
+            <span className="sub">HÀNH TRÌNH 4 NĂM</span>
           </div>
 
           <div className="changelog-accordion-list">
@@ -373,7 +380,7 @@ export default function App() {
           <div className="section-head">
             <span className="num">04</span>
             <h2>CONTRIBUTORS</h2>
-            <span className="sub">{lang === "vi" ? "LỜI CẢM ƠN CHÂN THÀNH" : "CORE TEAM & PARTNERS"}</span>
+            <span className="sub">LỜI CẢM ƠN CHÂN THÀNH</span>
           </div>
 
           <div className="contributors-grid">
@@ -387,7 +394,7 @@ export default function App() {
                 <h3 className="contributor-group">{item.group[lang]}</h3>
                 <p className="contributor-summary">{item.summary[lang]}</p>
                 <div className="contributor-read-more">
-                  <span>{lang === "vi" ? "Đọc tâm sự" : "Read note"}</span>
+                  <span>Đọc tâm sự</span>
                   <ArrowUpRight size={14} />
                 </div>
               </div>
@@ -395,7 +402,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* 05 — THE FINAL BUILD (Mood Shift: Dark -> Warm Light) - Grand Emotional Climax */}
+        {/* 05 — THE FINAL BUILD (Mood Shift: Dark -> Warm Light) */}
         <section id="final-build" className="section">
           <div className="section-head">
             <span className="num">05</span>
@@ -459,9 +466,7 @@ export default function App() {
           </div>
 
           <p className="footer-closing">
-            {lang === "vi"
-              ? "Đây không phải là hồi kết. Đây là mở đầu cho phiên bản tiếp theo."
-              : "This is not the end. This is the beginning of the next version."}
+            Đây không phải là hồi kết. Đây là mở đầu cho phiên bản tiếp theo.
           </p>
 
           <div className="footer-bottom">
@@ -487,6 +492,91 @@ export default function App() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// 01 — BOOT SCREEN COMPONENT
+function BootScreen({ lang, onLaunch }) {
+  const [visibleLines, setVisibleLines] = useState(0);
+  const [bootFinished, setBootFinished] = useState(false);
+  const logs = bootLogs[lang] || bootLogs.vi;
+
+  const handleSkipLog = (e) => {
+    if (e) e.stopPropagation();
+    if (!bootFinished) {
+      setVisibleLines(logs.length);
+      setBootFinished(true);
+    }
+  };
+
+  useEffect(() => {
+    if (bootFinished) return;
+
+    const interval = setInterval(() => {
+      setVisibleLines((prev) => {
+        if (prev < logs.length) {
+          return prev + 1;
+        } else {
+          clearInterval(interval);
+          setBootFinished(true);
+          return prev;
+        }
+      });
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [logs.length, bootFinished]);
+
+  return (
+    <div
+      className="boot-screen"
+      onClick={!bootFinished ? handleSkipLog : undefined}
+      style={{ cursor: bootFinished ? "default" : "pointer" }}
+    >
+      <div className="boot-container" onClick={(e) => e.stopPropagation()}>
+        <div className="boot-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div className="boot-title">TRUONG-VAN-MINH</div>
+            <div className="boot-sub">graduation.release --initializing</div>
+          </div>
+          {!bootFinished && (
+            <button
+              className="boot-skip-btn"
+              onClick={handleSkipLog}
+              title="Bỏ qua / Skip log animation"
+            >
+              <SkipForward size={14} />
+              <span>BỎ QUA</span>
+            </button>
+          )}
+        </div>
+
+        <div className="boot-logs" onClick={!bootFinished ? handleSkipLog : undefined}>
+          {logs.slice(0, visibleLines).map((log, idx) => (
+            <div key={idx} className="boot-line">
+              <span className="boot-status">[ {log.status} ]</span>
+              <span className="boot-label">{log.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {bootFinished ? (
+          <div className="boot-result">
+            <div className="boot-success-badge">BUILD SUCCESSFUL</div>
+            <div className="boot-version">release/2026.0</div>
+
+            <button className="boot-launch-btn" onClick={onLaunch}>
+              <Terminal size={18} />
+              $ ./launch
+            </button>
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.75rem", color: "#00aa44", opacity: 0.8 }}>
+            (Chạm bất kỳ đâu để bỏ qua chạy log)
+          </div>
+        )}
+      </div>
     </div>
   );
 }
