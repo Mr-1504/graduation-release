@@ -1,38 +1,27 @@
 import React, { useEffect, useState } from "react";
 import {
   releaseInfo,
-  bootLogs,
   changelog,
   contributors,
 } from "./data";
 import {
-  Terminal,
   ArrowUpRight,
   ArrowDown,
   MapPin,
   CheckCircle2,
   X,
   ExternalLink,
-  Globe,
   ChevronDown,
   ChevronUp,
-  SkipForward,
 } from "lucide-react";
 
 export default function App() {
-  const [lang, setLang] = useState(() => {
-    return localStorage.getItem("graduation_lang") || "vi";
-  });
-  const [isBooted, setIsBooted] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const lang = "vi";
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeContributor, setActiveContributor] = useState(null);
   const [rsvpStatus, setRsvpStatus] = useState(() => {
     return localStorage.getItem("graduation_rsvp") || null;
   });
-  const [showTerminalModal, setShowTerminalModal] = useState(false);
-  const [terminalCommand, setTerminalCommand] = useState("");
-  const [terminalOutput, setTerminalOutput] = useState(null);
 
   // Accordion state for Changelog (default latest version open)
   const [expandedVersions, setExpandedVersions] = useState({
@@ -46,18 +35,6 @@ export default function App() {
     }));
   };
 
-  // Enable body overflow once booted
-  useEffect(() => {
-    if (!isBooted) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isBooted]);
-
   const handleScrollTo = (targetId) => {
     const el = document.getElementById(targetId);
     if (el) {
@@ -65,19 +42,11 @@ export default function App() {
     }
   };
 
-  const toggleLanguage = () => {
-    const nextLang = lang === "vi" ? "en" : "vi";
-    setLang(nextLang);
-    localStorage.setItem("graduation_lang", nextLang);
-  };
-
   // DevTools ASCII Banner on load
   useEffect(() => {
     console.log(
       `%c
 ╔══════════════════════════════════════════════════╗
-║                                                  ║
-║   Hey, you're looking under the hood! 🚀        ║
 ║                                                  ║
 ║   TRUONG VAN MINH — GRADUATION RELEASE 2026      ║
 ║   Thanks for being a part of this 4-year journey. ║
@@ -90,7 +59,6 @@ export default function App() {
 
   // Track scroll progress
   useEffect(() => {
-    if (!isBooted) return;
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
       if (totalScroll > 0) {
@@ -99,48 +67,12 @@ export default function App() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isBooted]);
-
-  // Keyboard shortcuts (Cmd/Ctrl + K for Easter egg terminal)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setShowTerminalModal((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const handleRsvp = (status) => {
     setRsvpStatus(status);
     localStorage.setItem("graduation_rsvp", status);
   };
-
-  const handleTerminalSubmit = (e) => {
-    e.preventDefault();
-    const cmd = terminalCommand.trim().toLowerCase();
-    if (cmd.startsWith("sudo graduate")) {
-      setTerminalOutput(
-        "Access Granted. Congratulations! 🎉 You have unlocked the developer master key."
-      );
-    } else if (cmd === "help") {
-      setTerminalOutput("Available commands: sudo graduate, status, exit");
-    } else if (cmd === "status") {
-      setTerminalOutput("STATUS: PRODUCTION | UPTIME: 4 YEARS | GRADUATE: TRUONG VAN MINH");
-    } else if (cmd === "exit") {
-      setShowTerminalModal(false);
-      setTerminalOutput(null);
-    } else {
-      setTerminalOutput(`Command not found: '${terminalCommand}'. Try 'sudo graduate'`);
-    }
-    setTerminalCommand("");
-  };
-
-  if (!isBooted) {
-    return <BootScreen lang={lang} onLaunch={() => setIsBooted(true)} />;
-  }
 
   return (
     <div className="app-container">
@@ -179,26 +111,6 @@ export default function App() {
           >
             {lang === "vi" ? "HÀNH TRÌNH" : "JOURNEY"}
           </a>
-
-          {/* Language Switcher Button */}
-          <button
-            className="nav-cmd-btn"
-            onClick={toggleLanguage}
-            title="Chuyển đổi ngôn ngữ / Switch Language"
-            style={{ fontWeight: 700, color: "var(--accent-cyan)", borderColor: "rgba(6, 182, 212, 0.4)" }}
-          >
-            <Globe size={14} />
-            <span>{lang.toUpperCase()}</span>
-          </button>
-
-          <button
-            className="nav-cmd-btn"
-            onClick={() => setShowTerminalModal(true)}
-            title="Open Easter Egg Terminal (Ctrl+K)"
-          >
-            <Terminal size={14} />
-            <span className="desktop-only">Ctrl+K</span>
-          </button>
         </div>
       </header>
 
@@ -407,7 +319,7 @@ export default function App() {
           <div className="section-head">
             <span className="num">03</span>
             <h2>CHANGELOG</h2>
-            <span className="sub">{lang === "vi" ? "HÀNH TRÌNH 4 NĂM (ACCORDION)" : "RELEASE HISTORY"}</span>
+            <span className="sub">{lang === "vi" ? "HÀNH TRÌNH 4 NĂM" : "RELEASE HISTORY"}</span>
           </div>
 
           <div className="changelog-accordion-list">
@@ -575,136 +487,6 @@ export default function App() {
           </div>
         </div>
       )}
-
-      {/* Easter Egg Terminal Modal */}
-      {showTerminalModal && (
-        <div className="terminal-modal" onClick={() => setShowTerminalModal(false)}>
-          <div className="terminal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="terminal-topbar">
-              <div className="terminal-dots">
-                <span className="terminal-dot red" />
-                <span className="terminal-dot yellow" />
-                <span className="terminal-dot green" />
-              </div>
-              <span className="terminal-title">developer-console.sh</span>
-              <button
-                style={{ background: "none", border: "none", color: "#71717a", cursor: "pointer" }}
-                onClick={() => setShowTerminalModal(false)}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="terminal-content">
-              <p style={{ color: "#a1a1aa" }}>
-                Type <code style={{ color: "#10b981" }}>sudo graduate</code> to execute master trigger.
-              </p>
-
-              {terminalOutput && (
-                <div style={{ color: "#00ff66", margin: "0.5rem 0", lineHeight: "1.4" }}>
-                  {terminalOutput}
-                </div>
-              )}
-
-              <form onSubmit={handleTerminalSubmit} className="terminal-input-line">
-                <span style={{ color: "#10b981" }}>$</span>
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder="sudo graduate"
-                  value={terminalCommand}
-                  onChange={(e) => setTerminalCommand(e.target.value)}
-                />
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// 01 — BOOT SCREEN COMPONENT
-function BootScreen({ lang, onLaunch }) {
-  const [visibleLines, setVisibleLines] = useState(0);
-  const [bootFinished, setBootFinished] = useState(false);
-  const logs = bootLogs[lang] || bootLogs.vi;
-
-  const handleSkipLog = (e) => {
-    if (e) e.stopPropagation();
-    if (!bootFinished) {
-      setVisibleLines(logs.length);
-      setBootFinished(true);
-    }
-  };
-
-  useEffect(() => {
-    if (bootFinished) return;
-
-    const interval = setInterval(() => {
-      setVisibleLines((prev) => {
-        if (prev < logs.length) {
-          return prev + 1;
-        } else {
-          clearInterval(interval);
-          setBootFinished(true);
-          return prev;
-        }
-      });
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [logs.length, bootFinished]);
-
-  return (
-    <div
-      className="boot-screen"
-      onClick={!bootFinished ? handleSkipLog : undefined}
-      style={{ cursor: bootFinished ? "default" : "pointer" }}
-    >
-      <div className="boot-container" onClick={(e) => e.stopPropagation()}>
-        <div className="boot-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div className="boot-title">TRUONG-VAN-MINH</div>
-            <div className="boot-sub">graduation.release --initializing</div>
-          </div>
-          {!bootFinished && (
-            <button
-              className="boot-skip-btn"
-              onClick={handleSkipLog}
-              title="Bỏ qua / Skip log animation"
-            >
-              <SkipForward size={14} />
-              <span>{lang === "vi" ? "BỎ QUA" : "SKIP"}</span>
-            </button>
-          )}
-        </div>
-
-        <div className="boot-logs" onClick={!bootFinished ? handleSkipLog : undefined}>
-          {logs.slice(0, visibleLines).map((log, idx) => (
-            <div key={idx} className="boot-line">
-              <span className="boot-status">[ {log.status} ]</span>
-              <span className="boot-label">{log.text}</span>
-            </div>
-          ))}
-        </div>
-
-        {bootFinished ? (
-          <div className="boot-result">
-            <div className="boot-success-badge">BUILD SUCCESSFUL</div>
-            <div className="boot-version">release/2026.0</div>
-
-            <button className="boot-launch-btn" onClick={onLaunch}>
-              <Terminal size={18} />
-              $ ./launch
-            </button>
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.75rem", color: "#00aa44", opacity: 0.8 }}>
-            {lang === "vi" ? "(Chạm bất kỳ đâu để bỏ qua chạy log)" : "(Tap anywhere to skip logs)"}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
